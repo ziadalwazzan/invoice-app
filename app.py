@@ -1,5 +1,5 @@
 # Standard Libs
-from flask import Flask, render_template, send_file
+from flask import Flask, render_template, send_file, request
 import os
 import io
 from datetime import datetime
@@ -9,7 +9,7 @@ from weasyprint import HTML
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/') # Add JSON request capability
 def render_invoice():
 
     # Structure invoice data
@@ -31,7 +31,7 @@ def render_invoice():
         },{
             'item': 'Hosting (3 months)',
             'qty': 2,
-            'unit_price': 75.032,
+            'unit_price': 75.032, # Check type casting issue
             'total': 150.064
         },{
             'item': 'Domain name (1 year)',
@@ -51,13 +51,10 @@ def render_invoice():
                             items = items,
                             total = total
                             )
-    # Convert html into pdf
-    html = HTML(string=rendered_invoice)
+    # Convert html into pdf and send to client
+    html = HTML(string=rendered_invoice, base_url=request.base_url )
     rendered_pdf = html.write_pdf('static/forged_invoice.pdf')
-    return send_file(
-            io.BytesIO(rendered_pdf),
-            attachment_filename='forged_invoice.pdf'
-        )
+    return send_file('static/forged_invoice.pdf')
 
 
 if __name__ == '__main__':
