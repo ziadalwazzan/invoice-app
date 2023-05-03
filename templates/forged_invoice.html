@@ -68,6 +68,12 @@
     font-weight: bold;
   }
 
+  .invoice-box table tr td.payment-title {
+    font-weight: bold;
+    font-size: x-large;
+    padding-top: 20px;
+  }
+
   @media only screen and (max-width: 600px) {
     .invoice-box table tr.top table td {
       width: 100%;
@@ -150,7 +156,8 @@
               <td>
                 Forged L.L.C<br>
                 +965 99921351<br>
-                AlRai, St 39<br>
+                info@forgedkw.com<br>
+                AlRai, Block 1, St 39<br>
                 PACI Number 90582875
               </td>
             </tr>
@@ -213,6 +220,17 @@
         <td></td>
         <td>
            Total: KWD {{total}}
+        </td>
+      </tr>
+
+      <tr class="payment-info">
+        <td class="payment-title">Payment Info</td>
+      </tr>
+      <tr>
+        <td>
+          Account Name: FORGED<br>
+          IBAN: KW12NBOK0000000000002027047748 <br>
+          Currency: KWD
         </td>
       </tr>
       
