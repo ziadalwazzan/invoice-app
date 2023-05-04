@@ -4,37 +4,36 @@ import tkinter as tk
 
 # Other Libs
 import requests
+import customtkinter
 
-class App(tk.Frame):
-    def __init__(self, master):
-        super().__init__(master)
-        self.pack()
+class Client_GUI():
 
-        self.entrythingy = tk.Entry()
-        self.entrythingy.pack()
+    def __init__(self) -> None:
+        customtkinter.set_appearance_mode("system")
+        customtkinter.set_default_color_theme("dark-blue")
 
-        # Create the application variable.
-        self.contents = tk.StringVar()
-        # Set it to some value.
-        self.contents.set("this is a variable")
-        # Tell the entry widget to watch this variable.
-        self.entrythingy["textvariable"] = self.contents
+        self.root = customtkinter.CTk()
+        self.root.geometry("800x600")
 
-        # Define a callback for when the user hits return.
-        # It prints the current value of the variable.
-        self.entrythingy.bind('<Key-Return>',
-                             self.print_contents)
+        self.frame = customtkinter.CTkFrame(master=self.root) 
+        self.frame.pack(pady=60, padx=80, fill="both", expand=True)
 
-    def print_contents(self, event):
-        print("Hi. The current entry content is:",
-              self.contents.get())
+        self.label = customtkinter.CTkLabel(master=self.frame, text="Invoice System")
+        self.label.pack(pady= 12, padx=10)
+
+        self.doc_option_menu = customtkinter.CTkOptionMenu(master=self.frame, values=["Invoice"])
+        self.doc_option_menu.pack(pady= 12, padx=10)
+        self.doc_option_menu.set("Document Type")
+
+        self.customer_name_entry = customtkinter.CTkEntry(master=self.frame, placeholder_text="Customer Name")
+        self.customer_name_entry.pack(pady=12, padx=10)
+
+        self.customer_number_entry = customtkinter.CTkEntry(master=self.frame, placeholder_text="Customer Number")
+        self.customer_number_entry.pack(pady=12, padx=10)
+
+        self.root.mainloop()
 
 def main():
-    root = tk.Tk()
-    myapp = App(root)
-    myapp.mainloop()
-    print("HIIIII")
-    return
     data = {
         'invoice_number' : 123,
         'customer_info' : {
@@ -63,6 +62,11 @@ def main():
             }
         ]
     }
+
+    gui = Client_GUI()
+
+
+    return
 
     url = 'http://127.0.0.1:5000/'
     html = requests.post(url, json=data)
