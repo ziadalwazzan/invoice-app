@@ -1,59 +1,52 @@
 # Standard Libs
-from flask import Flask, render_template, send_file, request
+from flask import Flask, render_template, send_file, request, abort
+import sqlite3
 import os
 import io
+import json
 from math import fsum
 from datetime import datetime
 
 # Other Libs
+from flask_expects_json import expects_json
 from weasyprint import HTML
+
+# Set up app config
 
 app = Flask(__name__)
 
-@app.route('/', methods = ['GET', 'POST']) # Add JSON request capability
+def get_db_connection():
+    conn = sqlite3.connect('database.db')
+    conn.row_factory = sqlite3.Row
+    return conn
+
+#Load json schema
+with open("static/schema.json") as fp:
+    schema = json.load(fp)
+
+@app.route('/', methods = ['POST'])
+@expects_json(schema)
 def render_invoice():
 
-    # Get client request JSON data
-    posted_data = request.get_json() or {}
-    #print(posted_data['invoice_number'])
-
-    # Structure invoice data
+    # Parse client POST request JSON data
+    params = request.get_json()
+    customer_info, items, invoice_number = params.get('customer_info'), params.get('items'), params.get('invoice_number')
     current_date = datetime.today().strftime("%B %-d, %Y")
 
-    default_data = {
-        'invoice_number' : 123,
-        'customer_info' : {
-            'customer_name': 'John Doe',
-            'customer_number': '+965 99999999',
-            'customer_email': 'john@example.com',
-            'company_name': 'Orange Inc',
-            'company_address': 'Yarmouk, Block 1, St 10, House 11'
-        },
-        'items' : [
-            {
-                'item': 'Default_item 1',
-                'qty': 2,
-                'unit_price': 150.750,
-                'total': 301.500
-            },{
-                'item': 'Default_item 2',
-                'qty': 2,
-                'unit_price': 75.032, # Check type casting issue
-                'total': 150.064
-            },{
-                'item': 'Default_item 3',
-                'qty': 1,
-                'unit_price': 10.325,
-                'total': 10.325
-            }
-        ]
-    }
+    # Validate request data
+    if not (customer_info['customer_name'] and customer_info['customer_phone'] and customer_info['customer_email'] and [i['total'] for i in items] ):
+            return abort(400, 
+                         ("Request must include customer_info -> ",
+                         "customer_name,customer_phone,customer_email ",
+                         "and 'items' as part of the JSON data.")
+                        )
 
-    invoice_number = posted_data.get('invoice_number', 
-                                      default_data['invoice_number'])
-    customer_info = posted_data.get('customer_info', 
-                                      default_data['customer_info'])
-    items = posted_data.get('items', default_data['items'])
+    # DB
+    conn = get_db_connection()
+    ins = conn.execute('SELECT * FROM c_info').fetchall()
+    conn.close()
+    print(ins)
+
 
     total = round(fsum([i['total'] for i in items]),3)
     
