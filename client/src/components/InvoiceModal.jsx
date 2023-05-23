@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { toPng } from 'html-to-image';
-import { jsPDF } from 'jspdf';
+//import { toPng } from 'html-to-image';
+//import { jsPDF } from 'jspdf';
 
 const InvoiceModal = ({
   isOpen,
@@ -15,10 +15,33 @@ const InvoiceModal = ({
   }
 
   const addNextInvoiceHandler = () => {
+    console.log(invoiceInfo)
     setIsOpen(false);
     onAddNextInvoice();
   };
 
+/*
+//PDF download button
+                <button
+                  className="flex w-full items-center justify-center space-x-1 rounded-md border border-blue-500 py-2 text-sm text-blue-500 shadow-sm hover:bg-blue-500 hover:text-white"
+                  onClick={SaveAsPDFHandler}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                    />
+                  </svg>
+                  <span>Download</span>
+                </button>
   const SaveAsPDFHandler = () => {
     const dom = document.getElementById('print');
     toPng(dom)
@@ -80,6 +103,7 @@ const InvoiceModal = ({
         console.error('oops, something went wrong!', error);
       });
   };
+*/
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -126,10 +150,16 @@ const InvoiceModal = ({
                   <div className="mb-4 grid grid-cols-2">
                     <span className="font-bold">Invoice Number:</span>
                     <span>{invoiceInfo.invoiceNumber}</span>
-                    <span className="font-bold">Cashier:</span>
-                    <span>{invoiceInfo.cashierName}</span>
-                    <span className="font-bold">Customer:</span>
+                    <span className="font-bold">Customer Name:</span>
                     <span>{invoiceInfo.customerName}</span>
+                    <span className="font-bold">Customer Number:</span>
+                    <span>{invoiceInfo.customerPhone}</span>
+                    <span className="font-bold">Customer E-mail:</span>
+                    <span>{invoiceInfo.customerEmail}</span>
+                    <span className="font-bold">Company Name:</span>
+                    <span>{invoiceInfo.companyName}</span>
+                    <span className="font-bold">Company Address:</span>
+                    <span>{invoiceInfo.companyAddress}</span>
                   </div>
 
                   <table className="w-full text-left">
@@ -148,11 +178,11 @@ const InvoiceModal = ({
                           <td className="min-w-[50px] text-center">
                             {item.qty}
                           </td>
-                          <td className="min-w-[80px] text-right">
-                            ${Number(item.price).toFixed(2)}
+                          <td className="min-w-[120px] text-right">
+                            KWD {Number(item.price).toFixed(3)}
                           </td>
-                          <td className="min-w-[90px] text-right">
-                            ${Number(item.price * item.qty).toFixed(2)}
+                          <td className="min-w-[140px] text-right">
+                            KWD {Number(item.price * item.qty).toFixed(3)}
                           </td>
                         </tr>
                       ))}
@@ -162,45 +192,25 @@ const InvoiceModal = ({
                   <div className="mt-4 flex flex-col items-end space-y-2">
                     <div className="flex w-full justify-between border-t border-black/10 pt-2">
                       <span className="font-bold">Subtotal:</span>
-                      <span>${invoiceInfo.subtotal.toFixed(2)}</span>
+                      <span>KWD {invoiceInfo.subtotal.toFixed(3)}</span>
                     </div>
                     <div className="flex w-full justify-between">
                       <span className="font-bold">Discount:</span>
-                      <span>${invoiceInfo.discountAmount.toFixed(2)}</span>
+                      <span>KWD {invoiceInfo.discountAmount.toFixed(3)}</span>
                     </div>
                     <div className="flex w-full justify-between border-t border-black/10 py-2">
                       <span className="font-bold">Total:</span>
                       <span className="font-bold">
-                        $
+                        KWD
                         {invoiceInfo.total % 1 === 0
                           ? invoiceInfo.total
-                          : invoiceInfo.total.toFixed(2)}
+                          : invoiceInfo.total.toFixed(3)}
                       </span>
                     </div>
                   </div>
                 </div>
               </div>
               <div className="mt-4 flex space-x-2 px-4 pb-6">
-                <button
-                  className="flex w-full items-center justify-center space-x-1 rounded-md border border-blue-500 py-2 text-sm text-blue-500 shadow-sm hover:bg-blue-500 hover:text-white"
-                  onClick={SaveAsPDFHandler}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                    />
-                  </svg>
-                  <span>Download</span>
-                </button>
                 <button
                   onClick={addNextInvoiceHandler}
                   className="flex w-full items-center justify-center space-x-1 rounded-md bg-blue-500 py-2 text-sm text-white shadow-sm hover:bg-blue-600"
@@ -219,7 +229,7 @@ const InvoiceModal = ({
                       d="M13 5l7 7-7 7M5 5l7 7-7 7"
                     />
                   </svg>
-                  <span>Next</span>
+                  <span>Generate invoice</span>
                 </button>
               </div>
             </div>
