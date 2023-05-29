@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
+import axios from 'axios';
 //import { toPng } from 'html-to-image';
 //import { jsPDF } from 'jspdf';
 
@@ -14,8 +15,55 @@ const InvoiceModal = ({
     setIsOpen(false);
   }
 
+  // const postInvoiceData = async(e) => {
+  //   e.preventDefault()
+  //   let post_data = {
+  //     invoice_number : invoiceInfo.invoiceNumber,
+  //     customer_info : {
+  //       cusomer_name : invoiceInfo.customerName,
+  //       customer_phone : invoiceInfo.customerPhone,
+  //       customer_email : invoiceInfo.customerEmail,
+  //       company_name: invoiceInfo.companyName,
+  //       company_address : invoiceInfo.companyAddress
+  //     },
+  //     items,
+  //     total : invoiceInfo.total
+  //   }
+  //   console.log(post_data)
+  //   axios.post(
+  //     'http://127.0.0.1:5000/', 
+  //     post_data,
+  //     {
+  //       responseType: 'blob',
+  //       headers: {
+  //         'Access-Control-Allow-Origin' : '*',
+  //         'Access-Control-Allow-Headers': '*',
+  //         'Access-Control-Allow-Credentials': 'true'
+  //       }
+  //     }
+  //   )
+  //   .then(response => {
+  //     // create file link in browser's memory
+  //     const href = URL.createObjectURL(response.data);
+
+  //     // create "a" HTML element with href to file & click
+  //     const link = document.createElement('a');
+  //     link.href = href;
+  //     link.setAttribute('download', 'file.pdf'); //or any other extension
+  //     document.body.appendChild(link);
+  //     link.click();
+
+  //     // clean up "a" element & remove ObjectURL
+  //     document.body.removeChild(link);
+  //     URL.revokeObjectURL(href);
+  //   })
+  //   .catch(e => {
+  //     console.log('error: ', e);
+  //   });
+  // };
+
   const addNextInvoiceHandler = () => {
-    console.log(invoiceInfo)
+    //postInvoiceData();
     setIsOpen(false);
     onAddNextInvoice();
   };
@@ -179,10 +227,10 @@ const InvoiceModal = ({
                             {item.qty}
                           </td>
                           <td className="min-w-[120px] text-right">
-                            KWD {Number(item.price).toFixed(3)}
+                            KWD {Number(item.unit_price).toFixed(3)}
                           </td>
                           <td className="min-w-[140px] text-right">
-                            KWD {Number(item.price * item.qty).toFixed(3)}
+                            KWD {Number(item.unit_price * item.qty).toFixed(3)}
                           </td>
                         </tr>
                       ))}

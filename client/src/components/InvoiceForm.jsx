@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { uid } from 'uid';
 import InvoiceItem from './InvoiceItem';
 import InvoiceModal from './InvoiceModal';
@@ -24,13 +25,60 @@ const InvoiceForm = () => {
       id: uid(6),
       name: '',
       qty: 1,
-      price: '1.000',
+      unit_price: '1.000',
     },
   ]);
 
   const reviewInvoiceHandler = (event) => {
     event.preventDefault();
     setIsOpen(true);
+  };
+
+  const postInvoiceData = async(e) => {
+    e.preventDefault()
+    let post_data = {
+      invoice_number : invoiceNumber,
+      customer_info : {
+        customer_name : customerName,
+        customer_phone : customerPhone,
+        customer_email : customerEmail,
+        company_name: companyName,
+        company_address : companyAddress
+      },
+      items,
+      total
+    }
+    console.log(post_data)
+    axios.post(
+      'http://127.0.0.1:5000/', 
+      post_data,
+      {
+        responseType: 'blob',
+        headers: {
+          'Access-Control-Allow-Origin' : '*',
+          'Access-Control-Allow-Headers': '*',
+          'Access-Control-Allow-Credentials': 'true'
+        }
+      }
+    )
+    .then(response => {
+      // create file link in browser's memory
+      const href = URL.createObjectURL(response.data);
+
+      // create "a" HTML element with href to file & click
+      const link = document.createElement('a');
+      link.href = href;
+      link.setAttribute('download', 'file.pdf'); //or any other extension
+      document.body.appendChild(link);
+      link.click();
+
+      // clean up "a" element & remove ObjectURL
+      document.body.removeChild(link);
+      URL.revokeObjectURL(href);
+    })
+    .catch(e => {
+      console.log('error: ', e);
+    });
   };
 
   const addNextInvoiceHandler = () => {
@@ -40,7 +88,7 @@ const InvoiceForm = () => {
         id: uid(6),
         name: '',
         qty: 1,
-        price: '1.000',
+        unit_price: '1.000',
       },
     ]);
   };
@@ -53,7 +101,7 @@ const InvoiceForm = () => {
         id: id,
         name: '',
         qty: 1,
-        price: '1.000',
+        unit_price: '1.000',
       },
     ]);
   };
@@ -83,7 +131,7 @@ const InvoiceForm = () => {
 
   const subtotal = items.reduce((prev, curr) => {
     if (curr.name.trim().length > 0)
-      return prev + Number(curr.price * Math.floor(curr.qty));
+      return prev + Number(curr.unit_price * Math.floor(curr.qty));
     else return prev;
   }, 0);
   const discountAmount = subtotal - discount;
@@ -92,7 +140,8 @@ const InvoiceForm = () => {
   return (
     <form
       className="relative flex flex-col px-2 md:flex-row"
-      onSubmit={reviewInvoiceHandler}
+      onSubmit={postInvoiceData}
+      //onSubmit={reviewInvoiceHandler}
     >
       <div className="my-6 flex-1 space-y-2  rounded-md bg-white p-4 shadow-sm sm:space-y-4 md:p-6">
         <div className="flex flex-col justify-between space-y-2 border-b border-gray-900/10 pb-4 md:flex-row md:items-center md:space-y-0">
@@ -194,7 +243,7 @@ const InvoiceForm = () => {
                 id={item.id}
                 name={item.name}
                 qty={item.qty}
-                price={item.price}
+                unit_price={item.unit_price}
                 onDeleteItem={deleteItemHandler}
                 onEdtiItem={edtiItemHandler}
               />

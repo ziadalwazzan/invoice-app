@@ -1,7 +1,7 @@
 import React from 'react';
 import InvoiceField from './InvoiceField';
 
-const InvoiceItem = ({ id, name, qty, price, onDeleteItem, onEdtiItem }) => {
+const InvoiceItem = ({ id, name, qty, unit_price, onDeleteItem, onEdtiItem }) => {
   const deleteItemHandler = () => {
     onDeleteItem(id);
   };
@@ -45,9 +45,9 @@ const InvoiceItem = ({ id, name, qty, price, onDeleteItem, onEdtiItem }) => {
             type: 'number',
             min: '0.001',
             step: '0.001',
-            name: 'price',
+            name: 'unit price',
             id: id,
-            value: price,
+            value: unit_price,
           }}
         />
       </td>

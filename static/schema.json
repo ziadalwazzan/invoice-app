@@ -73,13 +73,13 @@
 				"title": "Items", 
 				"type": "object",
 				"required": [
-					"item",
+					"name",
 					"qty",
 					"unit_price",
 					"total"
 				],
 				"properties": {
-					"item": {
+					"name": {
 						"$id": "#root/items/items/item", 
 						"title": "Item", 
 						"type": "string",
