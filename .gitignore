@@ -23,3 +23,5 @@ yarn-error.log*
 *.pyc
 venv/
 testgui.py
+*.db
+client/invoice.pdf
