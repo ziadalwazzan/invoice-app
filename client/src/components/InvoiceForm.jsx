@@ -37,7 +37,6 @@ const InvoiceForm = () => {
   const postInvoiceData = async(e) => {
     e.preventDefault()
     let post_data = {
-      invoice_number : invoiceNumber,
       customer_info : {
         customer_name : customerName,
         customer_phone : customerPhone,
@@ -46,9 +45,9 @@ const InvoiceForm = () => {
         company_address : companyAddress
       },
       items,
+      discountAmount,
       total
     }
-    console.log(post_data)
     axios.post(
       'http://127.0.0.1:5000/', 
       post_data,
@@ -65,10 +64,12 @@ const InvoiceForm = () => {
       // create file link in browser's memory
       const href = URL.createObjectURL(response.data);
 
+      const filename = response.headers.get("content-disposition").split('filename=')[1]
+
       // create "a" HTML element with href to file & click
       const link = document.createElement('a');
       link.href = href;
-      link.setAttribute('download', 'file.pdf'); //or any other extension
+      link.setAttribute('download', filename); //or any other extension
       document.body.appendChild(link);
       link.click();
 
@@ -134,7 +135,8 @@ const InvoiceForm = () => {
       return prev + Number(curr.unit_price * Math.floor(curr.qty));
     else return prev;
   }, 0);
-  const discountAmount = subtotal - discount;
+  
+  const discountAmount = discount - 0;
   const total = subtotal - discountAmount;
 
   return (
@@ -316,7 +318,7 @@ const InvoiceForm = () => {
                   name="discount"
                   id="discount"
                   min="0"
-                  step="0.001"
+                  step="0.500"
                   placeholder="0.000"
                   value={discount}
                   onChange={(event) => setDiscount(event.target.value)}

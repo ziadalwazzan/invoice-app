@@ -5,17 +5,12 @@
 	"title": "Root", 
 	"type": "object",
 	"required": [
-		"invoice_number",
 		"customer_info",
-		"items"
+		"items",
+		"discount_amount",
+		"total"
 	],
 	"properties": {
-		"invoice_number": {
-			"$id": "#root/invoice_number", 
-			"title": "Invoice_number", 
-			"type": "integer",
-			"default": 0
-		},
 		"customer_info": {
 			"$id": "#root/customer_info", 
 			"title": "Customer_info", 
@@ -106,6 +101,18 @@
 					}
 				}
 			}
+		},
+		"discount_amount": {
+			"$id": "#root/discount_amount", 
+			"title": "Discount_amount", 
+			"type": "string",
+			"default": ""
+		},
+		"total": {
+			"$id": "#root/total", 
+			"title": "Total", 
+			"type": "string",
+			"default": ""
 		}
 	}
 }

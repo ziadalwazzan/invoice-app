@@ -43,9 +43,9 @@ const InvoiceItem = ({ id, name, qty, unit_price, onDeleteItem, onEdtiItem }) =>
           cellData={{
             className: 'text-right',
             type: 'number',
-            min: '0.001',
-            step: '0.001',
-            name: 'unit price',
+            min: '0.000',
+            step: '0.500',
+            name: 'unit_price',
             id: id,
             value: unit_price,
           }}
