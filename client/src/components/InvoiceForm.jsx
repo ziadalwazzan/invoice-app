@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { uid } from 'uid';
 import InvoiceItem from './InvoiceItem';
 import InvoiceModal from './InvoiceModal';
-import incrementString from '../helpers/incrementString';
+//import incrementString from '../helpers/incrementString'; //removed invoice number element
 const date = new Date();
 const today = date.toLocaleDateString('en-GB', {
   month: 'numeric',
@@ -14,7 +13,7 @@ const today = date.toLocaleDateString('en-GB', {
 const InvoiceForm = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [discount, setDiscount] = useState('');
-  const [invoiceNumber, setInvoiceNumber] = useState(1);
+  const [cashierName, setCashierName] = useState('');
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
@@ -34,56 +33,7 @@ const InvoiceForm = () => {
     setIsOpen(true);
   };
 
-  const postInvoiceData = async(e) => {
-    e.preventDefault()
-    let post_data = {
-      customer_info : {
-        customer_name : customerName,
-        customer_phone : customerPhone,
-        customer_email : customerEmail,
-        company_name: companyName,
-        company_address : companyAddress
-      },
-      items,
-      discountAmount,
-      total
-    }
-    axios.post(
-      'http://127.0.0.1:5000/', 
-      post_data,
-      {
-        responseType: 'blob',
-        headers: {
-          'Access-Control-Allow-Origin' : '*',
-          'Access-Control-Allow-Headers': '*',
-          'Access-Control-Allow-Credentials': 'true'
-        }
-      }
-    )
-    .then(response => {
-      // create file link in browser's memory
-      const href = URL.createObjectURL(response.data);
-
-      const filename = response.headers.get("content-disposition").split('filename=')[1]
-
-      // create "a" HTML element with href to file & click
-      const link = document.createElement('a');
-      link.href = href;
-      link.setAttribute('download', filename); //or any other extension
-      document.body.appendChild(link);
-      link.click();
-
-      // clean up "a" element & remove ObjectURL
-      document.body.removeChild(link);
-      URL.revokeObjectURL(href);
-    })
-    .catch(e => {
-      console.log('error: ', e);
-    });
-  };
-
   const addNextInvoiceHandler = () => {
-    setInvoiceNumber((prevNumber) => incrementString(prevNumber));
     setItems([
       {
         id: uid(6),
@@ -142,8 +92,7 @@ const InvoiceForm = () => {
   return (
     <form
       className="relative flex flex-col px-2 md:flex-row"
-      onSubmit={postInvoiceData}
-      //onSubmit={reviewInvoiceHandler}
+      onSubmit={reviewInvoiceHandler}
     >
       <div className="my-6 flex-1 space-y-2  rounded-md bg-white p-4 shadow-sm sm:space-y-4 md:p-6">
         <div className="flex flex-col justify-between space-y-2 border-b border-gray-900/10 pb-4 md:flex-row md:items-center md:space-y-0">
@@ -152,19 +101,17 @@ const InvoiceForm = () => {
             <span>{today}</span>
           </div>
           <div className="flex items-center space-x-2">
-            <label className="font-bold" htmlFor="invoiceNumber">
-              Invoice Number:
+            <label className="font-bold" htmlFor="cashierName">
+              Cashier Name:
             </label>
             <input
               required
               className="max-w-[130px]"
-              type="number"
-              name="invoiceNumber"
-              id="invoiceNumber"
-              min="1"
-              step="1"
-              value={invoiceNumber}
-              onChange={(event) => setInvoiceNumber(event.target.value)}
+              type="text"
+              name="cashierName"
+              id="cashierName"
+              value={cashierName}
+              onChange={(event) => setCashierName(event.target.value)}
             />
           </div>
         </div>
@@ -290,7 +237,7 @@ const InvoiceForm = () => {
             isOpen={isOpen}
             setIsOpen={setIsOpen}
             invoiceInfo={{
-              invoiceNumber,
+              cashierName,
               customerPhone,
               customerName,
               customerEmail,

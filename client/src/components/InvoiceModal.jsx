@@ -13,55 +13,57 @@ const InvoiceModal = ({
     setIsOpen(false);
   }
 
-  // const postInvoiceData = async(e) => {
-  //   e.preventDefault()
-  //   let post_data = {
-  //     invoice_number : invoiceInfo.invoiceNumber,
-  //     customer_info : {
-  //       cusomer_name : invoiceInfo.customerName,
-  //       customer_phone : invoiceInfo.customerPhone,
-  //       customer_email : invoiceInfo.customerEmail,
-  //       company_name: invoiceInfo.companyName,
-  //       company_address : invoiceInfo.companyAddress
-  //     },
-  //     items,
-  //     total : invoiceInfo.total
-  //   }
-  //   console.log(post_data)
-  //   axios.post(
-  //     'http://127.0.0.1:5000/', 
-  //     post_data,
-  //     {
-  //       responseType: 'blob',
-  //       headers: {
-  //         'Access-Control-Allow-Origin' : '*',
-  //         'Access-Control-Allow-Headers': '*',
-  //         'Access-Control-Allow-Credentials': 'true'
-  //       }
-  //     }
-  //   )
-  //   .then(response => {
-  //     // create file link in browser's memory
-  //     const href = URL.createObjectURL(response.data);
+  const postInvoiceData = async(e) => {
+    e.preventDefault()
+    let post_data = {
+      customer_info : {
+        customer_name : invoiceInfo.customerName,
+        customer_phone : invoiceInfo.customerPhone,
+        customer_email : invoiceInfo.customerEmail,
+        company_name: invoiceInfo.companyName,
+        company_address : invoiceInfo.companyAddress
+      },
+      items,
+      discountAmount: invoiceInfo.discountAmount,
+      total: invoiceInfo.total
+    }
+    console.log(post_data)
+    axios.post(
+      'http://127.0.0.1:5000/', 
+      post_data,
+      {
+        responseType: 'blob',
+        headers: {
+          'Access-Control-Allow-Origin' : '*',
+          'Access-Control-Allow-Headers': '*',
+          'Access-Control-Allow-Credentials': 'true'
+        }
+      }
+    )
+    .then(response => {
+      // create file link in browser's memory
+      const href = URL.createObjectURL(response.data);
 
-  //     // create "a" HTML element with href to file & click
-  //     const link = document.createElement('a');
-  //     link.href = href;
-  //     link.setAttribute('download', 'file.pdf'); //or any other extension
-  //     document.body.appendChild(link);
-  //     link.click();
+      const filename = response.headers.get("content-disposition").split('filename=')[1]
 
-  //     // clean up "a" element & remove ObjectURL
-  //     document.body.removeChild(link);
-  //     URL.revokeObjectURL(href);
-  //   })
-  //   .catch(e => {
-  //     console.log('error: ', e);
-  //   });
-  // };
+      // create "a" HTML element with href to file & click
+      const link = document.createElement('a');
+      link.href = href;
+      link.setAttribute('download', filename); //or any other extension
+      document.body.appendChild(link);
+      link.click();
 
-  const addNextInvoiceHandler = () => {
-    //postInvoiceData();
+      // clean up "a" element & remove ObjectURL
+      document.body.removeChild(link);
+      URL.revokeObjectURL(href);
+    })
+    .catch(e => {
+      console.log('error: ', e);
+    });
+  };
+
+  const addNextInvoiceHandler = (event) => {
+    postInvoiceData(event);
     setIsOpen(false);
     onAddNextInvoice();
   };
@@ -109,8 +111,6 @@ const InvoiceModal = ({
                 </h1>
                 <div className="mt-6">
                   <div className="mb-4 grid grid-cols-2">
-                    <span className="font-bold">Invoice Number:</span>
-                    <span>{invoiceInfo.invoiceNumber}</span>
                     <span className="font-bold">Customer Name:</span>
                     <span>{invoiceInfo.customerName}</span>
                     <span className="font-bold">Customer Number:</span>
