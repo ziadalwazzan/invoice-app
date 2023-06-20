@@ -1,0 +1,57 @@
+{
+	"definitions": {},
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "localhost:5000/", 
+	"title": "Root", 
+	"type": "object",
+	"required": [
+		"customer_info"
+	],
+	"properties": {
+		"customer_info": {
+			"$id": "#root/customer_info", 
+			"title": "Customer_info", 
+			"type": "object",
+			"required": [
+				"customer_phone"
+			],
+			"properties": {
+				"customer_name": {
+					"$id": "#root/customer_info/customer_name", 
+					"title": "Customer_name", 
+					"type": "string",
+					"default": "",
+					"pattern": "^.*$"
+				},
+				"customer_phone": {
+					"$id": "#root/customer_info/customer_phone", 
+					"title": "Customer_phone", 
+					"type": "string",
+					"default": "",
+					"pattern": "^.*$"
+				},
+				"customer_email": {
+					"$id": "#root/customer_info/customer_email", 
+					"title": "Customer_email", 
+					"type": "string",
+					"default": "",
+					"pattern": "^.*$"
+				},
+				"company_name": {
+					"$id": "#root/customer_info/company_name", 
+					"title": "Company_name", 
+					"type": "string",
+					"default": "",
+					"pattern": "^.*$"
+				},
+				"company_address": {
+					"$id": "#root/customer_info/company_address", 
+					"title": "Company_address", 
+					"type": "string",
+					"default": "",
+					"pattern": "^.*$"
+				}
+			}
+		}
+	}
+}

@@ -24,12 +24,12 @@ const InvoiceModal = ({
         company_address : invoiceInfo.companyAddress
       },
       items,
-      discountAmount: invoiceInfo.discountAmount,
-      total: invoiceInfo.total
+      discount_amount: JSON.stringify(invoiceInfo.discountAmount),
+      total: JSON.stringify(invoiceInfo.total)
     }
     console.log(post_data)
     axios.post(
-      'http://127.0.0.1:5000/', 
+      'http://127.0.0.1:5000/render_invoice', 
       post_data,
       {
         responseType: 'blob',

@@ -7,17 +7,12 @@ schema = {
 	"title": "Root", 
 	"type": "object",
 	"required": [
-		"invoice_number",
 		"customer_info",
-		"items"
+		"items",
+		"discount_amount",
+		"total"
 	],
 	"properties": {
-		"invoice_number": {
-			"$id": "#root/invoice_number", 
-			"title": "Invoice_number", 
-			"type": "integer",
-			"default": 0
-		},
 		"customer_info": {
 			"$id": "#root/customer_info", 
 			"title": "Customer_info", 
@@ -75,13 +70,12 @@ schema = {
 				"title": "Items", 
 				"type": "object",
 				"required": [
-					"item",
+					"name",
 					"qty",
-					"unit_price",
-					"total"
+					"unit_price"
 				],
 				"properties": {
-					"item": {
+					"name": {
 						"$id": "#root/items/items/item", 
 						"title": "Item", 
 						"type": "string",
@@ -97,17 +91,23 @@ schema = {
 					"unit_price": {
 						"$id": "#root/items/items/unit_price", 
 						"title": "Unit_price", 
-						"type": "number",
-						"default": 0.0
-					},
-					"total": {
-						"$id": "#root/items/items/total", 
-						"title": "Total", 
-						"type": "number",
-						"default": 0.0
+						"type": "string",
+						"default": "^.*$"
 					}
 				}
 			}
+		},
+		"discount_amount": {
+			"$id": "#root/discount_amount", 
+			"title": "Discount_amount", 
+			"type": "string",
+			"default": ""
+		},
+		"total": {
+			"$id": "#root/total", 
+			"title": "Total", 
+			"type": "string",
+			"default": ""
 		}
 	}
 }
@@ -116,7 +116,29 @@ schema = {
 
 validate(
     instance={
-        "invoice_number" : 123,
+        'customer_info': {
+            'customer_name': 'Ziad AlWazzan',
+            'customer_phone': '7864772581',
+            'customer_email': 'q8-zayood@hotmail.com',
+            'company_name': '',
+            'company_address': '1975 30th St, APT 328'
+            }, 
+            'items': [
+                {
+                    'id': '819734',
+                    'name': 'qww',
+                    'qty': 1,
+                    'unit_price': '1.000'
+                }
+            ],
+            'discount_amount': "0",
+            'total': "1"
+    },
+    schema=schema,
+)
+
+validate(
+    instance={
         "customer_info" : {
             "customer_name": "Flan AlFlani",
             "customer_phone": "+965 55555555",
@@ -126,17 +148,19 @@ validate(
         },
         "items" : [
             {
-                "item": "Web App",
+                "id" : "h234h5hr542",
+                "name": "Web App",
                 "qty": 2,
-                "unit_price": 150.750,
-                "total": 301.500
+                "unit_price": "150.750"
             },{
-                "item": "AWS Hosting",
+                "id" : "h234h5hr542",
+                "name": "AWS Hosting",
                 "qty": 2,
-                "unit_price": 75.032,
-                "total": 150.064
+                "unit_price": "75.032"
             }
-        ]
+        ],
+        'discount_amount' : '5.0',
+        'total' : "100"
     },
     schema=schema,
 )
@@ -145,7 +169,6 @@ validate(
 
 validate(
     instance={
-        "invoice_number" : 123,
         "customer_info" : {
             "customer_name": "Flan AlFlani",
             "customer_phone": "+965 55555555",
@@ -153,17 +176,19 @@ validate(
         },
         "items" : [
             {
-                "item": "Web App",
+                "name": "Web App",
                 "qty": 2,
-                "unit_price": 150.750,
+                "unit_price": "150.750",
                 "total": 301.500
             },{
-                "item": "AWS Hosting",
+                "name": "AWS Hosting",
                 "qty": 2,
-                "unit_price": 75.032,
+                "unit_price": "75.032",
                 "total": 150.064
             }
-        ]
+        ],
+        'discount_amount' : '5.0',
+        'total' : "100"
     },
     schema=schema,
 )

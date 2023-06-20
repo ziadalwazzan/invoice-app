@@ -17,8 +17,7 @@
 			"type": "object",
 			"required": [
 				"customer_name",
-				"customer_phone",
-				"customer_email"
+				"customer_phone"
 			],
 			"properties": {
 				"customer_name": {
@@ -70,8 +69,7 @@
 				"required": [
 					"name",
 					"qty",
-					"unit_price",
-					"total"
+					"unit_price"
 				],
 				"properties": {
 					"name": {
@@ -90,14 +88,8 @@
 					"unit_price": {
 						"$id": "#root/items/items/unit_price", 
 						"title": "Unit_price", 
-						"type": "number",
-						"default": 0.0
-					},
-					"total": {
-						"$id": "#root/items/items/total", 
-						"title": "Total", 
-						"type": "number",
-						"default": 0.0
+						"type": "string",
+						"default": "^.*$"
 					}
 				}
 			}
@@ -106,13 +98,13 @@
 			"$id": "#root/discount_amount", 
 			"title": "Discount_amount", 
 			"type": "string",
-			"default": ""
+			"default": "^.*$"
 		},
 		"total": {
 			"$id": "#root/total", 
 			"title": "Total", 
 			"type": "string",
-			"default": ""
+			"default": "^.*$"
 		}
 	}
 }
