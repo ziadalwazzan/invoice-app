@@ -24,3 +24,4 @@ venv/
 invoices/
 *.db
 .DS_Store
+*.log

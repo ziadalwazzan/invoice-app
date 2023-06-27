@@ -5,12 +5,14 @@ import sqlite3
 import os
 import json
 from datetime import datetime
+import logging
 
 # Other Libs
 from flask_expects_json import expects_json
 from weasyprint import HTML
 
 # Set up app config
+logging.basicConfig(filename='logs/invoice_api.log', level=logging.DEBUG, format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 app = Flask(__name__)
 CORS(app, expose_headers=["Content-Disposition"])
 
@@ -28,7 +30,7 @@ with open("static/lookup_customer_schema.json") as fp:
 '''
 render_invoice method:
 
-REQUIRES the following JSON schema
+REQUIRES the following payload with JSON schema:
 {
     'customer_info': {
         'customer_name': 'NAME',                            STRING
@@ -56,7 +58,8 @@ REQUIRES the following JSON schema
 @app.route('/render_invoice', methods = ['POST'])
 @expects_json(render_invoice_schema)
 def render_invoice():
-    print(f"request JSON data: \n {request.get_json()} \n\n\n")
+    app.logger.info('ROUTE: /render_invoice')
+    app.logger.info(f"request JSON data: \n {request.get_json()}")
     
     if request.method == "POST": 
         # Parse client POST request JSON data
@@ -84,8 +87,7 @@ def render_invoice():
             customer_id = conn.execute(query).fetchone()['c_id']
         else:
             customer_id = row['c_id']
-            print("DB query returned with customer: {}".format(row['name']))
-            print('customer already exists')
+            app.logger.info(f'Customer {row["name"]} already exists')
 
         # invoice table insert
         conn.execute(f'INSERT INTO invoice (c_id,discount_amount,total) VALUES ({customer_id}, \'{discount}\', \'{total}\')')
@@ -121,25 +123,40 @@ def render_invoice():
         html.write_pdf(f'invoices/{dir_name}/{file_name}')
         return send_file(f"invoices/{dir_name}/{file_name}", download_name=file_name)
 
-@app.route('/lookup_customer', methods = ['GET']) #UNTESTED METHOD
-@expects_json(lookup_customer_schema)
+
+
+'''
+lookup_customer method:
+
+REQUIRES the following payload:
+/lookup_customer?customer_phone=INSERT_PHONE_NUMBER
+
+'''
+@app.route('/lookup_customer', methods = ['GET'])
 def lookup_customer():
-    print(f"request JSON data: \n {request.get_json()} \n\n\n")
-    
-    if request.method == "GET": 
+    app.logger.info('ROUTE: /lookup_customer')
+    if request.method == "GET":
         # Parse client request JSON data
-        params = request.get_json()
-        customer_info = params.get('customer_info')
-        customer_phone = customer_info["customer_phone"]
-    
-    conn = get_db_connection()
-    query = f'select * from c_info where phone={customer_phone};'
-    row = conn.execute(query).fetchone()
-    if row:
-        print(f"DB query returned with customer: {row['name']}")
-    else:
-        print(f"Customer {customer_phone}")
-       
+        customer_phone = request.args.get('customer_phone')
+        app.logger.info(f'request arguments: {customer_phone}')
+
+        # Query client by phone number
+        conn = get_db_connection()
+        query = f'select * from c_info where phone={customer_phone};'
+        row = conn.execute(query).fetchone()
+        if row:
+            response = {
+                'customer_name' : row['name'],
+                'customer_phone' : row['phone'],
+                'customer_email' : row['email'],
+                'company_name' : row['company_name'],
+                'company_address' : row['company_address'],
+            }
+            app.logger.info(f"DB query returned with customer: {response}")
+            return response
+        else:
+            app.logger.info(f"Customer {customer_phone} not registered")
+            abort(404)
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))

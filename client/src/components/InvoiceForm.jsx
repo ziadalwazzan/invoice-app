@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { uid } from 'uid';
 import InvoiceItem from './InvoiceItem';
 import InvoiceModal from './InvoiceModal';
+import axios from 'axios';
 //import incrementString from '../helpers/incrementString'; //removed invoice number element
+
 const date = new Date();
 const today = date.toLocaleDateString('en-GB', {
   month: 'numeric',
@@ -89,6 +91,35 @@ const InvoiceForm = () => {
   const discountAmount = discount - 0;
   const total = subtotal - discountAmount;
 
+  const lookupCustomer = async(e) => {
+    e.preventDefault()
+    let json_data = {'customer_phone': customerPhone}
+    console.log(json_data)
+    axios.get(
+      'http://127.0.0.1:5000/lookup_customer', 
+      { params: {'customer_phone': customerPhone} }, // CHECK MEDIA TYPE
+      {
+        responseType: 'json',
+        headers: {
+          'Access-Control-Allow-Origin' : '*',
+          'Access-Control-Allow-Headers': '*',
+          'Access-Control-Allow-Credentials': 'true'
+        }
+      }
+    )
+    .then((response) => {
+      console.log(response.data)
+      setCustomerName(response.data['customer_name']);
+      setCustomerPhone(response.data['customer_phone']);
+      setCustomerEmail(response.data['customer_email']);
+      setCompanyName(response.data['company_name']);
+      setCompanyAddress(response.data['company_address']);
+    })
+    .catch(e => {
+      console.log('error: ', e);
+    });
+  };
+
   return (
     <form
       className="relative flex flex-col px-2 md:flex-row"
@@ -118,39 +149,41 @@ const InvoiceForm = () => {
         <h1 className="text-center text-lg font-bold">INVOICE</h1>
         <div className="grid grid-cols-2 gap-2 pt-4 pb-8">
           <label
-            htmlFor="customerName"
-            className="text-sm font-bold sm:text-base"
-          >
-            Customer InvoiceField:
-          </label>
-          <input
-            required
-            className="flex-1"
-            placeholder="Customer name"
-            type="text"
-            name="customerName"
-            id="customerName"
-            value={customerName}
-            onChange={(event) => setCustomerName(event.target.value)}
-          />
-           <label
             htmlFor="customerPhone"
-            className="col-start-2 row-start-1 text-sm font-bold md:text-base"
+            className="col-start-1 row-start-1 text-sm font-bold md:text-base"
           >
+          Customer Info:
           </label>
           <input
             required
-            className="col-start-2 text-sm md:text-base"
-            placeholder="Customer phone"
+            className="col-start-1 text-sm md:text-base"
+            placeholder="Phone"
             type="text"
             name="customerPhone"
             id="customerPhone"
             value={customerPhone}
             onChange={(event) => setCustomerPhone(event.target.value)}
           />
+          <button
+             className="w-full rounded-md bg-blue-500 py-2 text-sm text-white shadow-sm hover:bg-blue-600"
+             type="submit"
+             onClick={lookupCustomer}
+           >
+             Lookup By Phone
+          </button>
+          <input
+            required
+            className="flex-1"
+            placeholder="Name"
+            type="text"
+            name="customerName"
+            id="customerName"
+            value={customerName}
+            onChange={(event) => setCustomerName(event.target.value)}
+          />
           <input
             className="flex-1"
-            placeholder="Customer email"
+            placeholder="Email"
             type="text"
             name="customerEmail"
             id="customerEmail"
@@ -158,7 +191,7 @@ const InvoiceForm = () => {
             onChange={(event) => setCustomerEmail(event.target.value)}
           />
          <input
-           className="col-start-2 text-sm md:text-base"
+           className="col-start-1 text-sm md:text-base"
            placeholder="Company name"
            type="text"
            name="companyName"

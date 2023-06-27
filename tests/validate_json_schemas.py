@@ -1,119 +1,13 @@
+import json
 from jsonschema import validate
 
-schema = {
-	"definitions": {},
-	"$schema": "http://json-schema.org/draft-07/schema#",
-	"$id": "localhost:5000/", 
-	"title": "Root", 
-	"type": "object",
-	"required": [
-		"customer_info",
-		"items",
-		"discount_amount",
-		"total"
-	],
-	"properties": {
-		"customer_info": {
-			"$id": "#root/customer_info", 
-			"title": "Customer_info", 
-			"type": "object",
-			"required": [
-				"customer_name",
-				"customer_phone",
-				"customer_email"
-			],
-			"properties": {
-				"customer_name": {
-					"$id": "#root/customer_info/customer_name", 
-					"title": "Customer_name", 
-					"type": "string",
-					"default": "",
-					"pattern": "^.*$"
-				},
-				"customer_phone": {
-					"$id": "#root/customer_info/customer_phone", 
-					"title": "Customer_phone", 
-					"type": "string",
-					"default": "",
-					"pattern": "^.*$"
-				},
-				"customer_email": {
-					"$id": "#root/customer_info/customer_email", 
-					"title": "Customer_email", 
-					"type": "string",
-					"default": "",
-					"pattern": "^.*$"
-				},
-				"company_name": {
-					"$id": "#root/customer_info/company_name", 
-					"title": "Company_name", 
-					"type": "string",
-					"default": "",
-					"pattern": "^.*$"
-				},
-				"company_address": {
-					"$id": "#root/customer_info/company_address", 
-					"title": "Company_address", 
-					"type": "string",
-					"default": "",
-					"pattern": "^.*$"
-				}
-			}
-		},
-		"items": {
-			"$id": "#root/items", 
-			"title": "Items", 
-			"type": "array",
-			"default": [],
-			"items":{
-				"$id": "#root/items/items", 
-				"title": "Items", 
-				"type": "object",
-				"required": [
-					"name",
-					"qty",
-					"unit_price"
-				],
-				"properties": {
-					"name": {
-						"$id": "#root/items/items/item", 
-						"title": "Item", 
-						"type": "string",
-						"default": "",
-						"pattern": "^.*$"
-					},
-					"qty": {
-						"$id": "#root/items/items/qty", 
-						"title": "Qty", 
-						"type": "integer",
-						"default": 0
-					},
-					"unit_price": {
-						"$id": "#root/items/items/unit_price", 
-						"title": "Unit_price", 
-						"type": "string",
-						"default": "^.*$"
-					}
-				}
-			}
-		},
-		"discount_amount": {
-			"$id": "#root/discount_amount", 
-			"title": "Discount_amount", 
-			"type": "string",
-			"default": ""
-		},
-		"total": {
-			"$id": "#root/total", 
-			"title": "Total", 
-			"type": "string",
-			"default": ""
-		}
-	}
-}
+#Load json schemas customer_lookup_schema
+with open("./static/render_invoice_schema.json") as fp:
+    render_invoice_schema = json.load(fp)
+with open("./static/lookup_customer_schema.json") as fp:
+    lookup_customer_schema = json.load(fp)
 
 # No error, the JSON is valid.
-
 validate(
     instance={
         'customer_info': {
@@ -134,9 +28,10 @@ validate(
             'discount_amount': "0",
             'total': "1"
     },
-    schema=schema,
+    schema=render_invoice_schema,
 )
 
+# No error, the JSON is valid.
 validate(
     instance={
         "customer_info" : {
@@ -162,11 +57,10 @@ validate(
         'discount_amount' : '5.0',
         'total' : "100"
     },
-    schema=schema,
+    schema=render_invoice_schema,
 )
 
 # No error, the JSON is valid.
-
 validate(
     instance={
         "customer_info" : {
@@ -190,5 +84,19 @@ validate(
         'discount_amount' : '5.0',
         'total' : "100"
     },
-    schema=schema,
+    schema=render_invoice_schema,
+)
+
+# No error, the JSON is valid.
+validate(
+    instance={
+        'customer_info': {
+            'customer_name': 'Ziad AlWazzan',
+            'customer_phone': '7864772581',
+            'customer_email': 'q8-zayood@hotmail.com',
+            'company_name': '',
+            'company_address': '1975 30th St, APT 328'
+		}
+    },
+    schema=lookup_customer_schema,
 )
