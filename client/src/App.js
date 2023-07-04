@@ -1,13 +1,19 @@
 import React from 'react';
-import InvoiceForm from './components/InvoiceForm';
+import {Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from "react-router-dom";
+import Root from "./Root";
+import Invoice from "./pages/Invoice";
+import Qoute from "./pages/Qoute";
+
+const router = createBrowserRouter(createRoutesFromElements(
+  <Route path="/" element={ <Root/> } >
+    <Route path='Invoice' element={ <Invoice/> } />
+    <Route path='Qoute' element={ <Qoute/> } />
+  </Route>
+))
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="mx-auto max-w-7xl">
-        <InvoiceForm />
-      </div>
-    </div>
+    <RouterProvider router={router} />
   );
 }
 

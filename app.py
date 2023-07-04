@@ -6,13 +6,21 @@ import os
 import json
 from datetime import datetime
 import logging
+from logging import handlers
 
 # Other Libs
 from flask_expects_json import expects_json
 from weasyprint import HTML
 
 # Set up app config
-logging.basicConfig(filename='logs/invoice_api.log', level=logging.DEBUG, format=f'%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
+formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+handler = handlers.TimedRotatingFileHandler('logs/invoice-app-server.log', when="midnight", backupCount=3, interval=5)
+handler.suffix = "%Y-%m-%d_%H-%M-%S"
+handler.setFormatter(formatter)
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+logger.addHandler(handler)
+
 app = Flask(__name__)
 CORS(app, expose_headers=["Content-Disposition"])
 
