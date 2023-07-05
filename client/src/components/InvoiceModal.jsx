@@ -5,6 +5,7 @@ import axios from 'axios';
 const InvoiceModal = ({
   isOpen,
   setIsOpen,
+  docType,
   invoiceInfo,
   items,
   onAddNextInvoice,
@@ -25,11 +26,21 @@ const InvoiceModal = ({
       },
       items,
       discount_amount: JSON.stringify(invoiceInfo.discountAmount),
+      due_date: invoiceInfo.dueDate,
       total: JSON.stringify(invoiceInfo.total)
     }
     console.log(post_data)
+
+    let baseUrl = 'http://127.0.0.1:5000'
+    if (docType === "Invoice"){
+      baseUrl+='/render_invoice'
+    }
+    else{
+      baseUrl+='/render_qoute'
+    }
+    
     axios.post(
-      'http://127.0.0.1:5000/render_invoice', 
+      baseUrl, 
       post_data,
       {
         responseType: 'blob',
@@ -107,7 +118,7 @@ const InvoiceModal = ({
             <div className="my-8 inline-block w-full max-w-md transform overflow-hidden rounded-lg bg-white text-left align-middle shadow-xl transition-all">
               <div className="p-4" id="print">
                 <h1 className="text-center text-lg font-bold text-gray-900">
-                  INVOICE
+                  { docType === "Invoice" ? "Invoice" : "Qoute" }
                 </h1>
                 <div className="mt-6">
                   <div className="mb-4 grid grid-cols-2">
@@ -190,7 +201,7 @@ const InvoiceModal = ({
                       d="M13 5l7 7-7 7M5 5l7 7-7 7"
                     />
                   </svg>
-                  <span>Generate invoice</span>
+                  <span> { docType === "Invoice" ? "Generate Invoice" : "Generate Qoute" }</span>
                 </button>
               </div>
             </div>

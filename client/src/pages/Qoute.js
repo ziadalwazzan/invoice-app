@@ -1,9 +1,12 @@
 import React from 'react';
+import QouteForm from '../components/QouteForm';
 
 function Qoute() {
   return (
     <div className="min-h-screen bg-gray-100">
-      <a>This is a blank PAGE</a>
+      <div className="mx-auto max-w-6xl absolute right-0">
+        <QouteForm />
+      </div>
     </div>
   );
 }

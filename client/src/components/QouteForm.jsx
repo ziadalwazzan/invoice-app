@@ -3,7 +3,6 @@ import { uid } from 'uid';
 import InvoiceItem from './InvoiceItem';
 import InvoiceModal from './InvoiceModal';
 import axios from 'axios';
-//import incrementString from '../helpers/incrementString'; //removed invoice number element
 
 const date = new Date();
 const today = date.toLocaleDateString('en-GB', {
@@ -12,9 +11,10 @@ const today = date.toLocaleDateString('en-GB', {
   year: 'numeric',
 });
 
-const InvoiceForm = () => {
+const QouteForm = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [discount, setDiscount] = useState('');
+  const [dueDate, setDueDate] = useState('');
   const [cashierName, setCashierName] = useState('');
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
@@ -146,7 +146,7 @@ const InvoiceForm = () => {
             />
           </div>
         </div>
-        <h1 className="text-center text-lg font-bold">INVOICE</h1>
+        <h1 className="text-center text-lg font-bold">QOUTE</h1>
         <div className="grid grid-cols-2 gap-2 pt-4 pb-8">
           <label
             htmlFor="customerPhone"
@@ -264,12 +264,12 @@ const InvoiceForm = () => {
             className="w-full rounded-md bg-blue-500 py-2 text-sm text-white shadow-sm hover:bg-blue-600"
             type="submit"
           >
-            Review Invoice
+            Review Qoute
           </button>
           <InvoiceModal
             isOpen={isOpen}
             setIsOpen={setIsOpen}
-            docType="Invoice"
+            docType="Qoute"
             invoiceInfo={{
               cashierName,
               customerPhone,
@@ -279,6 +279,7 @@ const InvoiceForm = () => {
               companyAddress,
               subtotal,
               discountAmount,
+              dueDate,
               total,
             }}
             items={items}
@@ -286,28 +287,45 @@ const InvoiceForm = () => {
           />
           <div className="space-y-4 py-2">
             <div className="space-y-2">
-              <label
+                <label
                 className="text-sm font-bold md:text-base"
                 htmlFor="discount"
-              >
+                >
                 Discount amount:
-              </label>
-              <div className="flex items-center">
-                <input
-                  className="w-full rounded-r-none bg-white shadow-sm"
-                  type="number"
-                  name="discount"
-                  id="discount"
-                  min="0"
-                  step="0.500"
-                  placeholder="0.000"
-                  value={discount}
-                  onChange={(event) => setDiscount(event.target.value)}
-                />
-                <span className="rounded-r-md bg-gray-200 py-2 px-4 text-gray-500 shadow-sm">
-                  KWD
-                </span>
-              </div>
+                </label>
+                <div className="flex items-center">
+                    <input
+                        className="w-full rounded-r-none bg-white shadow-sm"
+                        type="number"
+                        name="discount"
+                        id="discount"
+                        min="0"
+                        step="0.500"
+                        placeholder="0.000"
+                        value={discount}
+                        onChange={(event) => setDiscount(event.target.value)}
+                    />
+                    <span className="rounded-r-md bg-gray-200 py-2 px-4 text-gray-500 shadow-sm">
+                        KWD
+                    </span>
+                </div>
+                <br></br>
+                <label
+                className="text-sm font-bold md:text-base"
+                htmlFor="dueDate"
+                >
+                Due date:
+                </label>
+                <div className="flex items-center">
+                    <input
+                    className="w-full rounded-r-none bg-white shadow-sm"
+                    type="date"
+                    name="dueDate"
+                    id="dueDate"
+                    value={dueDate}
+                    onChange={(event) => setDueDate(event.target.value)}
+                    />
+                </div>
             </div>
           </div>
         </div>
@@ -316,4 +334,4 @@ const InvoiceForm = () => {
   );
 };
 
-export default InvoiceForm;
+export default QouteForm;
