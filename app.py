@@ -129,8 +129,6 @@ def render_invoice():
         html.write_pdf(f'invoices/{dir_name}/{file_name}')
         return send_file(f"invoices/{dir_name}/{file_name}", download_name=file_name)
     
-
-""" TODO Implement /render_qoute method
 '''
 render_qoute method:
 
@@ -169,15 +167,15 @@ def render_qoute():
     if request.method == "POST": 
         # Parse client POST request JSON data
         params = request.get_json()
-        customer_info, items, discount,due_date, total = params.get('customer_info'), params.get('items'), params.get('discount_amount'), params.get('due_date'), params.get('total')
+        customer_info, items, discount, due_date, total = params.get('customer_info'), params.get('items'), params.get('discount_amount'), params.get('due_date'), params.get('total')
         current_date = datetime.today().strftime("%B %-d, %Y")
 
         # Update DB model ->
         # if customer exists -> select and store customer id from table
         #   else--> add customer then select id
-        # insert invoice details discount/total into invoices table
-        # select and store invoice id
-        # insert invoice items into invoice_items table with invoice_id foreign key
+        # insert qoute details discount/due_date/total into qoutes table
+        # select and store qoute id
+        # insert qoute items into qoute_items table with qoute_id foreign key
         conn = get_db_connection()
 
         #Check if customer data exists or store it (referenced by phone)
@@ -194,40 +192,40 @@ def render_qoute():
             customer_id = row['c_id']
             app.logger.info(f'Customer {row["name"]} already exists')
 
-        # invoice table insert
-        conn.execute(f'INSERT INTO invoice (c_id,discount_amount,total) VALUES ({customer_id}, \'{discount}\', \'{total}\')')
+        # qoute table insert
+        conn.execute(f'INSERT INTO qoute (c_id,discount_amount,due_date,total) VALUES ({customer_id}, \'{discount}\', \'{due_date}\', \'{total}\')')
         conn.commit()
 
-        # get invoice id from db
-        invoice_number = conn.execute('SELECT invoice_id FROM invoice ORDER BY invoice_id DESC LIMIT 1;').fetchone()['invoice_id']
+        # get qoute id from db
+        qoute_id = conn.execute('SELECT qoute_id FROM qoute ORDER BY qoute_id DESC LIMIT 1;').fetchone()['qoute_id']
         
-        # insert invoice items
+        # insert qoute items
         for item in items:
-            conn.execute(f'INSERT INTO invoice_items (name,qty,unit_price,invoice_id) VALUES (\'{item["name"]}\', \'{item["qty"]}\', \'{item["unit_price"]}\', {invoice_number} )')
+            conn.execute(f'INSERT INTO qoute_items (name,qty,unit_price,qoute_id) VALUES (\'{item["name"]}\', \'{item["qty"]}\', \'{item["unit_price"]}\', {qoute_id} )')
             conn.commit()
 
         conn.close()
         
-        # Pass in invoice data and render html invoice
-        rendered_invoice = render_template('forged_invoice.html',
+        # Pass in qoute data and render html qoute
+        rendered_qoute = render_template('forged_qoute.html',
                                 date_issued = current_date,
-                                invoice_number = invoice_number,
+                                qoute_id = qoute_id,
                                 customer_info = customer_info,
                                 items = items,
+                                due_date = due_date,
                                 total = total
                                 )
                             
         # File system formatting
-        file_name = f"invoice-{invoice_number}-{customer_info['customer_phone']}.pdf"
+        file_name = f"qoute-{qoute_id}-{customer_info['customer_phone']}.pdf"
         dir_name = f"{datetime.today().year}-{datetime.today().month}"
-        if not os.path.exists(f"invoices/{dir_name}"):
-            os.mkdir(f"invoices/{dir_name}")
+        if not os.path.exists(f"qoutes/{dir_name}"):
+            os.mkdir(f"qoutes/{dir_name}")
 
         # Convert html into pdf and send to client
-        html = HTML(string=rendered_invoice, base_url=request.base_url)
-        html.write_pdf(f'invoices/{dir_name}/{file_name}')
-        return send_file(f"invoices/{dir_name}/{file_name}", download_name=file_name)
-    """
+        html = HTML(string=rendered_qoute, base_url=request.base_url)
+        html.write_pdf(f'qoutes/{dir_name}/{file_name}')
+        return send_file(f"qoutes/{dir_name}/{file_name}", download_name=file_name)
 
 
 '''
