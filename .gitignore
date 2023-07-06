@@ -20,8 +20,11 @@ yarn-debug.log*
 yarn-error.log*
 
 *.pyc
-venv/
 invoices/
+qoutes/
 *.db
 .DS_Store
+
+# logs
 *.log
+*.log.*
