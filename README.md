@@ -2,7 +2,7 @@
 
 In the project directory, you can run:
 
-### `npm start`
+  cmd:  `npm start`
 
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
@@ -10,12 +10,13 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
 
-### `npm run start-backend`
+  cmd:  `npm run start-backend`
 
 Runs the flask app.\
 Server will listen on [http://localhost:5000].
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// App Set Up ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////  App Set Up ////////////////////////////////////////////////////////////////////////// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 Note:
 ------
@@ -27,15 +28,10 @@ Note:
 
 1. Install npm
 
-Mac:
-Windows:
-
-
 2. Run: 'npm install' in client directory
 
 3. install PM2 package and run the client using PM2 deamon proccess manager
-
-# 'npm install pm2 -g' 
+  cmd: 'npm install pm2 -g' 
 
 ------------------
 ||  venv setup  ||
@@ -48,7 +44,7 @@ Windows: Use python installer
 (https://www.python.org/downloads/)
 
 2. Navigate to the invoice-app/ directory and run:
-### 'source venv/bin/activate'
+  cmd: 'source venv/bin/activate'
 
 This will set up the python virtual environment so that the app has the required dependencies in the venv directory.
 
@@ -57,7 +53,7 @@ This will set up the python virtual environment so that the app has the required
 ------------------
 
 1. While in invoice-app/client Run: 
-'pm2 start npm -- run start-backend --'
+  cmd: 'pm2 start npm -- run start-backend --'
 
 
 
