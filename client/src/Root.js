@@ -1,16 +1,13 @@
-import React, {useState} from "react";
-import Sidebar from './components/Sidebar';
+import React from "react";
 import { Outlet } from "react-router-dom";
 
-const Root = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+import Sidebar from './components/Sidebar';
 
+const Root = () => {
   return (
-    <div className="root">
-      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen}/>
-      <div className="rootContainer">
-        <Outlet/>
-      </div>
+    <div className="min-h-screen bg-gray-100 mx-auto">
+      <Sidebar/>
+      <Outlet/>
     </div>
   );
 };

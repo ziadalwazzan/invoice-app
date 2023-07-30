@@ -32,7 +32,7 @@ const InvoiceItem = ({ id, name, qty, unit_price, onDeleteItem, onEdtiItem }) =>
           }}
         />
       </td>
-      <td className="relative min-w-[100px] md:min-w-[150px]">
+      <td className="relative min-w-[140px] md:min-w-[150px]">
         <label
           className="absolute left-2 top-1/2 h-6 w-6 -translate-y-1/2 text-gray-400 sm:left-4"
         >

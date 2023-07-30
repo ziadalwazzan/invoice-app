@@ -26,7 +26,7 @@ const InvoiceModal = ({
       },
       items,
       discount_amount: JSON.stringify(invoiceInfo.discountAmount),
-      due_date: invoiceInfo.dueDate,
+      due_date: invoiceInfo.dueDate, // Fix invoice json schema
       total: JSON.stringify(invoiceInfo.total)
     }
     console.log(post_data)

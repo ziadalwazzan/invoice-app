@@ -125,8 +125,8 @@ const QouteForm = () => {
       className="relative flex flex-col px-2 md:flex-row"
       onSubmit={reviewInvoiceHandler}
     >
-      <div className="my-6 flex-1 space-y-2  rounded-md bg-white p-4 shadow-sm sm:space-y-4 md:p-6">
-        <div className="flex flex-col justify-between space-y-2 border-b border-gray-900/10 pb-4 md:flex-row md:items-center md:space-y-0">
+      <div className="my-6 flex-1 space-y-2 rounded-md bg-white p-4 shadow-sm sm:space-y-4 md:p-6">
+        <div className="flex flex-col justify-between px-20 space-y-2 border-b border-gray-900/10 pb-4 md:flex-row md:items-center md:space-y-0">
           <div className="flex space-x-2">
             <span className="font-bold">Current Date: </span>
             <span>{today}</span>
@@ -136,8 +136,7 @@ const QouteForm = () => {
               Cashier Name:
             </label>
             <input
-              required
-              className="max-w-[130px]"
+              className="max-w-[150px]"
               type="text"
               name="cashierName"
               id="cashierName"

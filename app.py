@@ -64,7 +64,7 @@ REQUIRES the following payload with JSON schema:
 @app.route('/render_invoice', methods = ['POST'])
 @expects_json(render_invoice_schema)
 def render_invoice():
-    app.logger.info('ROUTE: /render_invoice')
+    app.logger.info(f'ROUTE: {request.url}')
     app.logger.info(f"request JSON data: \n {request.get_json()}")
     
     if request.method == "POST": 
@@ -161,7 +161,7 @@ REQUIRES the following payload with JSON schema:
 @app.route('/render_qoute', methods = ['POST'])
 #@expects_json(render_qoute_schema)
 def render_qoute():
-    app.logger.info('ROUTE: /render_qoute')
+    app.logger.info(f'ROUTE: {request.url}')
     app.logger.info(f"request JSON data: \n {request.get_json()}")
     
     if request.method == "POST": 
@@ -229,7 +229,7 @@ def render_qoute():
 
 
 '''
-lookup_customer method:
+lookup_customer method: ######CHANGE TO customers/getCustomer?customerPhone=XXXXXXXXX
 
 REQUIRES the following payload:
 /lookup_customer?customer_phone=INSERT_PHONE_NUMBER
@@ -237,13 +237,13 @@ REQUIRES the following payload:
 '''
 @app.route('/lookup_customer', methods = ['GET'])
 def lookup_customer():
-    app.logger.info('ROUTE: /lookup_customer')
+    app.logger.info(f'ROUTE: {request.url}')
     if request.method == "GET":
         # Parse client request JSON data
         customer_phone = request.args.get('customer_phone')
         app.logger.info(f'request arguments: {customer_phone}')
 
-        # Query client by phone number
+        # Query DB by phone number
         conn = get_db_connection()
         query = f'select * from c_info where phone={customer_phone};'
         row = conn.execute(query).fetchone()
@@ -260,6 +260,118 @@ def lookup_customer():
         else:
             app.logger.info(f"Customer {customer_phone} not registered")
             abort(404)
+
+'''
+customers get method:
+
+DOES NOT REQUIRE a payload
+
+Returns json list of customers
+
+'''
+@app.route('/customers', methods = ['GET'])
+def customers():
+    app.logger.info(f'ROUTE: {request.url}')
+    if request.method == "GET":
+        # Query DB for customers list
+        conn = get_db_connection()
+        query = f'select * from c_info;'
+        rows = conn.execute(query).fetchall()
+        if rows:
+            response = []
+            for row in rows:
+                response.append(
+                    {
+                        'c_id': row['c_id'],
+                        'customerName': row['name'],
+                        'customerPhone': row['phone'],
+                        'customerEmail': row['email'],
+                        'companyName':  row['company_name'],
+                        'companyAddress': row['company_address']
+                    }
+                )
+            app.logger.info(f"Response: {response}")
+            return response
+        else:
+            app.logger.info(f"empty or unsuccessful query")
+            abort(404)
+
+'''
+add_customer method:
+
+REQUIRES the following payload:
+{
+    'customer_name': newCustomerName,
+    'customer_phone': newCustomerPhone,
+    'customer_email': newCustomerEmail,
+    'company_name': newCompanyName,
+    'company_address': newCompanyAddress
+}
+'''
+@app.route('/customers/addCustomer', methods = ['POST'])
+def add_customer():
+    app.logger.info(f'ROUTE: {request.url}')
+    if request.method == "POST":
+        # Parse client request data
+        params = request.get_json()
+        customer_name, customer_phone, customer_email, company_name, company_address = params.get('customer_name'), params.get('customer_phone'), params.get('customer_email'), params.get('company_name'), params.get('company_address')
+        app.logger.info(f'Adding: Customer Name: {customer_name} / Customer Phone: {customer_phone} / Customer Email: {customer_email} / Company Name: {company_name} / Company Address: {company_address}')
+
+        # Check if customer data exists and store it only IF NOT EXISTS  (referenced by phone)
+        try:
+            conn = get_db_connection()
+            query = f'select * from c_info where phone=\'{customer_phone}\';'
+            row = conn.execute(query).fetchone()
+        except sqlite3.Error as error:
+            app.logger.info(f"Failed customer verification: {error}")
+            abort(500, f"Failed customer verification: {error}")
+
+        if row is None:
+            try:
+                # insert row into c_info table
+                conn.execute(f'INSERT INTO c_info (name,phone,email,company_name,company_address) VALUES ( \'{customer_name}\', {customer_phone}, \'{customer_email}\', \'{company_name}\', \'{company_address}\');')
+                conn.commit()
+                # Select customer ID
+                c_id = conn.execute(query).fetchone()['c_id']
+            except sqlite3.Error as error:
+                app.logger.info(f"Failed to add record to sqlite table: {error}")
+                abort(500, f"Failed to add record to sqlite table: {error}")
+            finally:
+                return {'c_id': c_id}, 200
+        else:
+            app.logger.info(f'Customer {row["name"]} already exists')
+            return f'customer {customer_name} already exists in db', 500
+        
+'''
+delete_customer method:
+
+REQUIRES the following payload:
+/customers/delete?c_id=INSERT_c_id
+
+'''
+@app.route('/customers/delete', methods = ['DELETE'])
+def delete_customer():
+    app.logger.info(f'ROUTE: {request.url}')
+    if request.method == "DELETE":
+        # Parse client request data
+        c_id = request.args.get('c_id')
+        app.logger.info(f'request arguments: c_id: {c_id}')
+
+        # Delete requested customer
+        try:
+            conn = get_db_connection()
+            query = f'DELETE FROM c_info where c_id={c_id};'
+            app.logger.info(f"Query: {query}")
+            conn.execute(query)
+            conn.commit()
+            app.logger.info(f"Customer {c_id} deleted successfully")
+        except sqlite3.Error as error:
+            app.logger.info(f"Failed to delete record from sqlite table: {error}")
+            abort()
+        finally:
+            if conn:
+                conn.close()
+            return f'Customer record: {c_id} has been deleted.', 204
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
