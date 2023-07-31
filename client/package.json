@@ -21,7 +21,6 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "start-backend": "cd .. && venv/bin/flask --app app run",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
