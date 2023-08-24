@@ -317,6 +317,7 @@ const QouteForm = () => {
                 </label>
                 <div className="flex items-center">
                     <input
+                    required
                     className="w-full rounded-r-none bg-white shadow-sm"
                     type="date"
                     name="dueDate"
