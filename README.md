@@ -1,5 +1,6 @@
 ## Preview
-[Insert App Demo Here]
+
+
 
 ## Available Scripts:
 
@@ -24,6 +25,7 @@ Note:
 ---
 
 - npm and python must be installed in order for this app to run.
+- After setting up Project, create a `server/invoices/` and `server/qoutes/` directory
 
 Client setup:
 ---
