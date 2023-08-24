@@ -1,6 +1,9 @@
-## Available Scripts
+## Preview
+[Insert App Demo Here]
 
-In the project directory, you can run:
+## Available Scripts:
+
+In the client directory, you can run:
 
   cmd:  `npm start`
 
@@ -15,27 +18,26 @@ You may also see any lint errors in the console.
 Runs the flask app.\
 Server will listen on [http://localhost:5000].
 
- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////  App Set Up ////////////////////////////////////////////////////////////////////////// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+## App Set Up:
 
 Note:
-------
+---
+
 - npm and python must be installed in order for this app to run.
 
-------------------
-|| Client setup ||
-------------------
+Client setup:
+---
 
-1. Install npm
+1. Install Node.js 20.5 / NPM 9.8
 
 2. Run: 'npm install' in client directory
 
-3. install PM2 package and run the client using PM2 deamon proccess manager
+3. install PM2 package which will be used to run the app.\
+  PM2 is a deamon proccess manager that is used to manage the client/server processes in the background.\
   cmd: 'npm install pm2 -g' 
 
-------------------
-||  venv setup  ||
-------------------
+venv setup:
+---
 
 1. Install Python 3.11
 
@@ -43,22 +45,36 @@ Mac: 'brew install python'
 Windows: Use python installer
 (https://www.python.org/downloads/)
 
-2. Navigate to the invoice-app/ directory and run:
+2. Navigate to the invoice-app/ directory and run:\
+  '[YOUR_PYTHON_INSTANCE] -m venv venv'
+
+3. Activate the instance:\
   cmd: 'source venv/bin/activate'
 
-This will set up the python virtual environment so that the app has the required dependencies in the venv directory.
+4. Install the server dependencies using the following command:\
+cmd: 'python3 -m pip install -r requirements.txt'\
+(The install command must be ran with the venv activated in order to use the correct python/pip instances)
 
-------------------
-|| Server setup ||
-------------------
+Server setup:
+---
 
-1. While in invoice-app/client Run: 
-  cmd: 'pm2 start npm -- run start-backend --'
-
-
+1. Navigate to the invoice-app/server/ Directory
+2. With the venv activated (Or using the correct Python instance/dependencies) initialize the SQLITE DB:\
+cmd: '[VENV_PYTHON_INSTANCE] init_db.py'
 
 
+## Starting the App:
 
+1. Navigate to the invoice-app/client/ directory.
+2. Start the Flask server: \
+    cmd: 'pm2 start npm --name invoice-server -- run start-backend --'
+3. Start the React client: \
+    cmd: 'pm2 start npm --name "invoice-client" -- start'
+
+Note:
+---
+To check PM2 running proccesses run:\
+cmd: 'pm2 list'
 
 
 

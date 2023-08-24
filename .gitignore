@@ -9,8 +9,8 @@ client/build
 
 # app data
 *.pyc
-server/invoices/
-server/qoutes/
+server/invoices/*
+server/qoutes/*
 server/*.db
 
 # logs
